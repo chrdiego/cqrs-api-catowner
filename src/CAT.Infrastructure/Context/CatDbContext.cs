@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Reflection;
 using CAT.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
@@ -6,7 +7,7 @@ namespace CAT.Infrastructure.Context
 {
     public class CatDbContext : DbContext
     {
-        public CatDbContext(DbContextOptions<CatDbContext> options) : base(options)
+        public CatDbContext([NotNull] DbContextOptions<CatDbContext> options) : base(options)
         {
         }
 

@@ -1,4 +1,6 @@
-﻿using CAT.Presentation.Infrastructure;
+﻿using CAT.Application.Contracts.Cats;
+using CAT.Application.Core.Cats.Queries.GetCatById;
+using CAT.Presentation.Infrastructure;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -12,10 +14,9 @@ namespace CAT.Presentation.Controllers
         }
 
         [HttpGet]
-        public IActionResult Get()
+        public async Task<IActionResult> GetCatById(int id)
         {
-            //this.Sender.Send();
-            return this.Ok();
+            return this.Ok(await this.Sender.Send(new GetCatByIdQuery(id)));
         }
     }
 }
