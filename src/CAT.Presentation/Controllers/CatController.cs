@@ -13,7 +13,7 @@ namespace CAT.Presentation.Controllers
         {
         }
 
-        [HttpGet]
+        [HttpGet("GetCatById")]
         public async Task<IActionResult> GetCatById(int id)
         {
             return this.Ok(await this.Sender.Send(new GetCatByIdQuery(id)));
