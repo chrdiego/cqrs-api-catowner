@@ -5,6 +5,7 @@ namespace CAT.Domain.Repository
 {
     public interface ICatRepository : IGenericRepository<int>
     {
+        Task<List<Cat>> GetCats();
         Task<Cat> GetCatById(int id);
     }
 }

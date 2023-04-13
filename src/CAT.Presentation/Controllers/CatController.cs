@@ -1,5 +1,6 @@
 ﻿using CAT.Application.Contracts.Cats;
 using CAT.Application.Core.Cats.Queries.GetCatById;
+using CAT.Application.Core.Cats.Queries.GetCats;
 using CAT.Presentation.Infrastructure;
 using MediatR;
 using Microsoft.AspNetCore.Http;
@@ -11,6 +12,12 @@ namespace CAT.Presentation.Controllers
     {
         public CatController(ISender sender) : base(sender)
         {
+        }
+
+        [HttpGet("GetCats")]
+        public async Task<IActionResult> GetCats()
+        {
+            return this.Ok(await this.Sender.Send(new GetCatsQuery()));
         }
 
         [HttpGet("GetCatById")]
