@@ -17,13 +17,17 @@ namespace CAT.Presentation.Controllers
         [HttpGet("GetCats")]
         public async Task<IActionResult> GetCats()
         {
-            return this.Ok(await this.Sender.Send(new GetCatsQuery()));
+            var result = await this.Sender.Send(new GetCatsQuery());
+
+            return this.Ok(result);
         }
 
         [HttpGet("GetCatById")]
         public async Task<IActionResult> GetCatById(int id)
         {
-            return this.Ok(await this.Sender.Send(new GetCatByIdQuery(id)));
+            var result = await this.Sender.Send(new GetCatByIdQuery(id));
+
+            return this.Ok(result);
         }
     }
 }

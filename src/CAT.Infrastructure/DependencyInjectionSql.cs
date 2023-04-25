@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using CAT.Domain.Primitives;
 using CAT.Infrastructure.Context;
 using CAT.Infrastructure.Repository;
 using Microsoft.EntityFrameworkCore;
@@ -19,7 +20,7 @@ namespace CAT.Infrastructure
 
         private static void AddDbContext(IServiceCollection services, IConfiguration configuration)
         {
-            string connectionStrings = configuration.GetConnectionString("Default");
+            string? connectionStrings = configuration.GetConnectionString("Default");
 
             services.AddDbContext<CatDbContext>(option =>
             {
@@ -31,7 +32,7 @@ namespace CAT.Infrastructure
         {
             Assembly assembly = typeof(TContext).GetTypeInfo().Assembly;
 
-            IEnumerable<Type> @types = assembly.GetTypes().Where(x => !x.IsNested && !x.IsInterface && typeof(GenericRepository<TKey>).IsAssignableFrom(x));
+            IEnumerable<Type> @types = assembly.GetTypes().Where(x => !x.IsNested && !x.IsInterface && typeof(IGenericRepository<TKey>).IsAssignableFrom(x));
 
             foreach (Type type in @types)
             {
