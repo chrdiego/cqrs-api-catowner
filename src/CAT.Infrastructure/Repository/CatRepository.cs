@@ -12,6 +12,11 @@ namespace CAT.Infrastructure.Repository
         {
         }
 
+        public async Task<List<Cat>> GetCats()
+        {
+            return await this.GetEntity<Cat>().ToListAsync();
+        }
+
         public async Task<Cat> GetCatById(int id)
         {
             return await this.GetEntity<Cat>().FirstOrDefaultAsync(x => x.Id == id);
