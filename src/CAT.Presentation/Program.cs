@@ -2,6 +2,7 @@ using System.Reflection;
 using CAT.Application;
 using CAT.Infrastructure;
 using CAT.Infrastructure.Context;
+using CAT.Presentation.Middleware;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 
@@ -31,6 +32,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseMiddleware<CustomExceptionHandlerMiddleware>();
 
 app.UseHttpsRedirection();
 
