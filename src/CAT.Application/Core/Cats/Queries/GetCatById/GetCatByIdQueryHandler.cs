@@ -1,13 +1,15 @@
 ﻿using AutoMapper;
 using CAT.Application.Abstractions.Messaging;
 using CAT.Application.Contracts.Cats;
+using CAT.Application.Contracts.Result;
 using CAT.Application.Exceptions;
 using CAT.Domain.Entities;
 using CAT.Domain.Repository;
+using FluentValidation.Results;
 
 namespace CAT.Application.Core.Cats.Queries.GetCatById
 {
-    internal sealed class GetCatByIdQueryHandler : IQueryHandler<GetCatByIdQuery, CatResponse>
+    internal sealed class GetCatByIdQueryHandler : IQueryHandler<GetCatByIdQuery, Result<CatResponse>>
     {
         protected readonly IMapper _mapper;
         private readonly ICatRepository _catRepository;
@@ -18,12 +20,18 @@ namespace CAT.Application.Core.Cats.Queries.GetCatById
             _mapper = mapper;
         }
 
-        public async Task<CatResponse> Handle(GetCatByIdQuery request, CancellationToken cancellationToken)
+        public async Task<Result<CatResponse>> Handle(GetCatByIdQuery request, CancellationToken cancellationToken)
         {
+            try
+            {
+                CatResponse res = this._mapper.Map<CatResponse>(await _catRepository.GetCatById(request.Id));
 
-            Cat cat = await _catRepository.GetCatById(request.Id);
-
-            return this._mapper.Map<CatResponse>(cat);
+                return new Result<CatResponse>(res, new List<ValidationResult>());
+            }
+            catch (Exception ex)
+            {
+                return new Result<CatResponse>(new CatResponse(), new List<ValidationResult>());
+            }
         }
     }
 }

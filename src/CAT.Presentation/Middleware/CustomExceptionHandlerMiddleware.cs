@@ -52,12 +52,13 @@ namespace CAT.Presentation.Middleware
             await httpContext.Response.WriteAsync(response);
         }
 
-        //private static SetStatusCode(Type type)
+        //private static (HttpStatusCode httpStatusCode, string message) GetHttpStatusCodeAndErrors(Type type)
         //{
-        //    switch (type)
+        //    return exception switch
         //    {
-
-        //    }
+        //        ValidationException validationException => (HttpStatusCode.BadRequest, validationException.Errors),
+        //        _ => (HttpStatusCode.InternalServerError, new[] { Errors.ServerError })
+        //    };
         //}
     }
 }
