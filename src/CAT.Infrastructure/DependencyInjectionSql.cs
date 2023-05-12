@@ -1,5 +1,6 @@
 ﻿using System.Reflection;
 using CAT.Domain.Primitives;
+using CAT.Domain.Repository;
 using CAT.Infrastructure.Context;
 using CAT.Infrastructure.Repository;
 using Microsoft.EntityFrameworkCore;
@@ -13,7 +14,7 @@ namespace CAT.Infrastructure
         public static IServiceCollection AddInfrastructureSql(this IServiceCollection services, IConfiguration configuration)
         {
             AddDbContext(services, configuration);
-            services.AddRepositories<int, CatDbContext>();
+            services.AddRepositories<CatDbContext>();
 
             return services;
         }
@@ -28,17 +29,10 @@ namespace CAT.Infrastructure
             });
         }
 
-        private static void AddRepositories<TKey, TContext>(this IServiceCollection services) where TContext : DbContext
+        private static void AddRepositories<TContext>(this IServiceCollection services) where TContext : DbContext
         {
-            Assembly assembly = typeof(TContext).GetTypeInfo().Assembly;
-
-            IEnumerable<Type> @types = assembly.GetTypes().Where(x => !x.IsNested && !x.IsInterface && typeof(IGenericRepository<TKey>).IsAssignableFrom(x));
-
-            foreach (Type type in @types)
-            {
-                Type @interface = type.GetInterface($"I{type.Name}", false);
-                services.AddTransient(@interface, type);
-            }
+            services.AddTransient<ICatRepository, CatRepository>();
+            services.AddTransient<IOwnerRepository, OwnerRepository>();
         }
     }
 }

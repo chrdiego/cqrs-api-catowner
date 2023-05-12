@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CAT.Infrastructure.Repository
 {
-    public class CatRepository : GenericRepository<int>, ICatRepository
+    public class CatRepository : GenericRepository<Cat>, ICatRepository
     {
         public CatRepository(CatDbContext context) : base(context)
         {
@@ -14,12 +14,12 @@ namespace CAT.Infrastructure.Repository
 
         public async Task<List<Cat>> GetCats()
         {
-            return await this.GetEntity<Cat>().ToListAsync();
+            return await this.GetAll().ToListAsync();
         }
 
         public async Task<Cat> GetCatById(int id)
         {
-            return await this.GetEntity<Cat>().FirstOrDefaultAsync(x => x.Id == id);
+            return await this.GetById(id);
         }
 
     }

@@ -3,24 +3,17 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CAT.Domain.Primitives
 {
-    public interface IGenericRepository<TKey>
+    public interface IGenericRepository<TEntity>
+        where TEntity : class, IEntity
     {
-        TContext GetContext<TContext>() where TContext : DbContext;
+        IQueryable<TEntity> GetAll();
 
-        DbSet<TEntity> GetEntity<TEntity>()
-            where TEntity : class, IEntityBase<TKey>;
+        Task<TEntity> GetById(int id);
 
-        Task<TEntity> CreateAsync<TEntity>(TEntity entity, CancellationToken cancellationToken = default)
-                                            where TEntity : class,
-                                            IEntityBase<TKey>;
+        Task Create(TEntity entity);
 
-        Task<bool> UpdateAsync<TEntity>(TEntity entity, CancellationToken cancellationToken = default)
-                                        where TEntity : class,
-                                        IEntityBase<TKey>;
+        Task Update(int id, TEntity entity);
 
-        Task<bool> DeleteAsync<TEntity>(Expression<Func<TEntity, bool>> predicate,
-                                        CancellationToken cancellationToken = default)
-                                                                where TEntity : class,
-                                                                IEntityBase<TKey>;
+        Task Delete(int id);
     }
 }

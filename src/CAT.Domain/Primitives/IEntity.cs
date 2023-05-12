@@ -1,7 +1,7 @@
 ﻿namespace CAT.Domain.Primitives
 {
-    public interface IEntityBase<TKey>
+    public interface IEntity
     {
-        public TKey Id { get; set; }
+        public int Id { get; set; }
     }
 }

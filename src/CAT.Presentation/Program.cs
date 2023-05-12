@@ -20,12 +20,6 @@ builder.Services.AddInfrastructureSql(builder.Configuration);
 
 var app = builder.Build();
 
-using (IServiceScope scope = app.Services.CreateScope())
-{
-    CatDbContext context = scope.ServiceProvider.GetRequiredService<CatDbContext>();
-    context.Database.Migrate();
-}
-
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {

@@ -2,7 +2,7 @@
 
 namespace CAT.Domain.Entities
 {
-    public class Owner : IEntityBase<int>
+    public class Owner : IEntity
     {
         public int Id { get; set; }
         public string Name { get; set; }

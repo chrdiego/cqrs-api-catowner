@@ -2,7 +2,7 @@
 
 namespace CAT.Domain.Entities
 {
-    public class Cat : IEntityBase<int>
+    public class Cat : IEntity
     {
         public int Id { get; set; }
         public string Name { get; set; }

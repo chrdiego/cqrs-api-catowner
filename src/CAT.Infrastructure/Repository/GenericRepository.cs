@@ -4,104 +4,43 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CAT.Infrastructure.Repository
 {
-    public class GenericRepository<TKey> : IGenericRepository<TKey>
+    public abstract class GenericRepository<TEntity> : IGenericRepository<TEntity>
+        where TEntity : class, IEntity
     {
-        protected readonly DbContext Context;
+        protected readonly DbContext _context;
 
         protected GenericRepository(DbContext context)
         {
-            Context = context ?? throw new ArgumentNullException(nameof(context));
+            _context = context;
         }
 
-        public TContext GetContext<TContext>() where TContext : DbContext
+        public IQueryable<TEntity> GetAll()
         {
-            return (TContext)Context;
+            return _context.Set<TEntity>().AsNoTracking();
         }
 
-        public DbSet<TEntity> GetEntity<TEntity>()
-            where TEntity : class,
-            IEntityBase<TKey>
+        public async Task<TEntity> GetById(int id)
         {
-            return Context.Set<TEntity>();
+            return await _context.Set<TEntity>().AsNoTracking().FirstOrDefaultAsync(e => e.Id == id);
         }
 
-        public async Task<TEntity> CreateAsync<TEntity>(TEntity entity,
-                                                CancellationToken cancellationToken = default)
-                                                    where TEntity : class,
-                                                    IEntityBase<TKey>
+        public async Task Create(TEntity entity)
         {
-            if (entity == null)
-            {
-                throw new ArgumentNullException(nameof(entity));
-            }
-
-            return await ProcessCreateAsync(entity, cancellationToken);
+            await _context.Set<TEntity>().AddAsync(entity);
+            await _context.SaveChangesAsync();
         }
 
-        private async Task<TEntity> ProcessCreateAsync<TEntity>(TEntity entity,
-                                                                CancellationToken cancellationToken)
-        where TEntity : class, IEntityBase<TKey>
+        public async Task Update(int id, TEntity entity)
         {
-            await Context.AddAsync(entity, cancellationToken);
-
-            await Context.SaveChangesAsync(cancellationToken);
-
-            return entity;
+            _context.Set<TEntity>().Update(entity);
+            await _context.SaveChangesAsync();
         }
 
-        public Task<bool> UpdateAsync<TEntity>(TEntity entity,
-                                               CancellationToken cancellationToken = default)
-                                                      where TEntity : class,
-                                                      IEntityBase<TKey>
+        public async Task Delete(int id)
         {
-            if (entity == null)
-            {
-                throw new ArgumentNullException(nameof(entity));
-            }
-
-            return ProcessUpdateAsync(entity, cancellationToken);
-        }
-
-        private async Task<bool> ProcessUpdateAsync<TEntity>(TEntity entity,
-                                                             CancellationToken cancellationToken)
-                                                                    where TEntity : class,
-                                                                    IEntityBase<TKey>
-        {
-            Context.Set<TEntity>().Update(entity);
-
-            bool success = await Context.SaveChangesAsync(cancellationToken) > 0;
-
-            return success;
-        }
-
-        public Task<bool> DeleteAsync<TEntity>(Expression<Func<TEntity, bool>> predicate,
-                                               CancellationToken cancellationToken = default)
-                                               where TEntity : class,
-                                               IEntityBase<TKey>
-        {
-            if (predicate == null)
-            {
-                throw new ArgumentNullException(nameof(predicate));
-            }
-
-            return ProcessDeleteAsync(predicate, cancellationToken);
-        }
-
-        private async Task<bool> ProcessDeleteAsync<TEntity>(Expression<Func<TEntity, bool>> predicate,
-                                                             CancellationToken cancellationToken)
-                                                             where TEntity : class,
-                                                             IEntityBase<TKey>
-        {
-            TEntity entity = await Context.Set<TEntity>().Where(predicate).FirstOrDefaultAsync();
-
-            if (entity == null)
-            {
-                return false;
-            }
-
-            Context.Set<TEntity>().Remove(entity);
-
-            return await Context.SaveChangesAsync(cancellationToken) > 0;
+            var entity = await GetById(id);
+            _context.Set<TEntity>().Remove(entity);
+            await _context.SaveChangesAsync();
         }
     }
 }
